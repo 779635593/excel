@@ -1,0 +1,28 @@
+{
+  "name": "zhuoxin/excel",
+  "authors": [
+    {
+      "name": "zhuoxin",
+      "email": "779635593@qq.com"
+    }
+  ],
+  "description": "excel操作类库",
+  "keywords": [
+    "excel",
+    "excel导入",
+    "excel导出"
+  ],
+  "version": "1.30.1",
+  "type": "library",
+  "license": "MIT",
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "phpoffice/phpspreadsheet": "^1.30"
+  },
+  "autoload": {
+    "psr-4": {
+      "zhuoxin\\excel\\": "src/"
+    }
+  }
+}

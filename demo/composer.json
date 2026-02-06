@@ -1,0 +1,12 @@
+{
+  "name": "test/excel",
+  "require": {
+    "zhuoxin/excel": "*"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../"
+    }
+  ]
+}
