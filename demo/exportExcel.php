@@ -2,13 +2,13 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use zhuoxin\excel\ExcelToCsv;
+use zhuoxin\excel\ExcelExport;
 
 // 导出表格
 try {
-	$excelToCsv = new ExcelToCsv('order');
+	$excelExport = new ExcelExport('order');
 	// 设置表头
-	$excelToCsv->setHeader(['id', '姓名', '性别']);
+	$excelExport->setHeader(['id', '姓名', '性别']);
 	$datas = [
 		[
 			'id'   => 1,
@@ -23,10 +23,10 @@ try {
 	];
 	foreach ($datas as $data) {
 		// 追加数据
-		$excelToCsv->addData($data);
+		$excelExport->addData($data);
 	}
 	// 关闭
-	$excelToCsv->close();
+	$excelExport->close();
 } catch (\Exception $e) {
 	var_dump($e->getMessage());
 }

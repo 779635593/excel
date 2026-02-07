@@ -2,10 +2,10 @@
 
 namespace zhuoxin\excel;
 
-// Excel 导出类，超大数据导出使用
+// Excel 导出类，大数据导出使用
 // 下载文件后缀是 .xlsx，双击直接用 Excel 打开，无任何提示；
 // 本质是 CSV 文件，但 Excel 完美兼容，用户完全无感知，这是生产环境的「障眼法」
-class ExcelToCsv
+class ExcelExport
 {
 
 	// 输出文件句柄
@@ -73,12 +73,11 @@ class ExcelToCsv
 			if ($value === null || $value === false) {
 				$value = '';
 			}
-			// 长数字处理：手机号/身份证号(≥5位纯数字) 加制表符，Excel强制识别为文本，防科学计数法
-			if (is_numeric($value) && strlen((string) $value) >= 5) {
-				$value = "\t" . $value;
+			// 长数字转为字符串
+			if (is_numeric($value) && strlen((string) $value) > 8) {
+				// 用="包裹数字，强制Excel以文本显示
+				$value = '="' . $value . '"';
 			}
-			// 去除首尾空格，避免脏数据
-			$value = trim((string) $value);
 		}
 		fputcsv($this->file_handler, $data);
 	}
