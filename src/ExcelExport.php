@@ -11,14 +11,22 @@ class ExcelExport
 	// 输出文件句柄
 	private $file_handler = null;
 
+	// 保存文件路径
+	private $file_path = null;
+
+	// 是否浏览器模式,默认false
+	private $is_browser_mode = false;
+
 	/**
 	 * 导出Csv类
 	 *
-	 * @param  string  $filename  // 文件名
+	 * @param  string  $filename   // 文件名
+	 * @param  string  $save_path  // 保存路径，为空则浏览器下载
 	 */
-	public function __construct(string $filename = "")
+	public function __construct(string $filename = "", string $save_path = "")
 	{
-		$filename = $filename . date('YmdHis');
+		// 生成文件名+年月日时分秒.xlsx
+		$filename = $filename . date('YmdHis') . '.xlsx';;
 		set_time_limit(0);
 		// 64M足够，百万行也够用
 		ini_set('memory_limit', '64M');
@@ -27,17 +35,28 @@ class ExcelExport
 		// 防止用户关闭浏览器中断导出
 		ignore_user_abort(true);
 
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header("Content-Disposition: attachment; filename={$filename}.xlsx");
-		header('Cache-Control: no-cache');
-		header('Pragma: no-cache');
-		header('Expires: 0');
-
-		// 打开文件句柄
-		$this->file_handler = fopen('php://output', 'w');
-		// UTF8 BOM头 解决Excel中文乱码，两种写法都正确，任选其一即可
+		// 浏览器下载模式
+		if (empty($save_path)) {
+			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			header("Content-Disposition: attachment; filename={$filename}");
+			header('Cache-Control: no-cache');
+			header('Pragma: no-cache');
+			header('Expires: 0');
+			// 打开文件句柄 输出流
+			$this->file_handler = fopen('php://output', 'w');
+		} else {
+			// 文件保存模式
+			$this->is_browser_mode = false;
+			$save_path             = rtrim($save_path, '/');
+			if ( ! is_dir($save_path)) {
+				mkdir($save_path, 0755, true);
+			}
+			$this->file_path = $save_path . '/' . $filename;
+			// 打开文件句柄 文件流
+			$this->file_handler = fopen($this->file_path, 'w');
+		}
+		// UTF8 BOM头 解决Excel中文乱码
 		fwrite($this->file_handler, chr(0xEF) . chr(0xBB) . chr(0xBF));
-		// fwrite($this->file_handler, chr(239).chr(187).chr(191));
 	}
 
 	/**
@@ -82,16 +101,29 @@ class ExcelExport
 		fputcsv($this->file_handler, $data);
 	}
 
+	/**
+	 * 获取文件路径（仅文件保存模式有效）
+	 */
+	public function getFilePath(): string
+	{
+		return $this->file_path;
+	}
+
 	// 主动关闭句柄
 	public function close()
 	{
 		if ($this->file_handler) {
-			// 强制刷新缓冲区，确保所有数据都输出完毕
-			ob_flush();
-			flush();
+			// 浏览器模式：需要刷新缓冲区和exit
+			if ($this->is_browser_mode) {
+				// 强制刷新缓冲区，确保所有数据都输出完毕
+				ob_flush();
+				flush();
+			}
 			fclose($this->file_handler);
 			$this->file_handler = null;
-			exit;
+			if ($this->is_browser_mode) {
+				exit;
+			}
 		}
 	}
 
