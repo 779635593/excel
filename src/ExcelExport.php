@@ -28,8 +28,6 @@ class ExcelExport
 		// 生成文件名+年月日时分秒.xlsx
 		$filename = $filename . date('YmdHis') . '.xlsx';;
 		set_time_limit(0);
-		// 64M足够，百万行也够用
-		ini_set('memory_limit', '64M');
 		// 取消执行时间限制
 		ini_set('max_execution_time', 0);
 		// 防止用户关闭浏览器中断导出
