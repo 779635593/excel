@@ -20,11 +20,11 @@ class ExcelExport
 	/**
 	 * 导出Csv类
 	 *
-	 * @param  string  $filename    // 文件名
+	 * @param  string  $filename    // 导出文件名
 	 * @param  string  $save_path   // 保存路径，为空则浏览器下载
-	 * @param  bool    $dateSuffix  // 时间后缀,默认true
+	 * @param  bool    $dateSuffix  // 生成时间后缀，默认true
 	 */
-	public function __construct(string $filename = "", string $save_path = "", bool $dateSuffix = true)
+	public function __construct(string $filename, string $save_path = "", bool $dateSuffix = true)
 	{
 		// 生成文件名+年月日时分秒.xlsx
 		// 时间后缀
