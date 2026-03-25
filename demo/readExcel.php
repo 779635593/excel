@@ -12,3 +12,13 @@ try {
 } catch (\Exception $e) {
 	var_dump($e->getMessage());
 }
+
+// 读取表格 生成器方式
+try {
+	$file_path = './test.xls';
+	foreach (ExcelUtil::readExcelGenerator($file_path) as $row) {
+		var_dump($row);
+	}
+} catch (\Exception $e) {
+	var_dump($e->getMessage());
+}
