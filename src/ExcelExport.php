@@ -233,4 +233,10 @@ class ExcelExport
 		return $letter;
 	}
 
+	// 关闭句柄
+	public function __destruct()
+	{
+		$this->close();
+	}
+
 }
