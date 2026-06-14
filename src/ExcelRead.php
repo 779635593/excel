@@ -5,23 +5,23 @@ namespace zhuoxin\excel;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-// Excel 工具类，仅用于读取文件，导出使用 ExcelToCsv ，不满足再使用 PhpOffice 自行编写
-class ExcelUtil
+// 读取 Excel 类
+class ExcelRead
 {
 
 	/**
 	 * 读取文件
 	 *
-	 * @param        $file_path  // 文件路径
-	 * @param  bool  $keepHead   // 是否保留头部，是从第1行读取，否则从第2行读取
+	 * @param        $filePath  // 文件路径
+	 * @param  bool  $keepHead  // 是否保留头部，是从第1行读取，否则从第2行读取
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public static function readExcel($file_path, bool $keepHead = false): array
+	public static function readExcel($filePath, bool $keepHead = false): array
 	{
 		$excelData = [];
-		foreach (self::readExcelGenerator($file_path, $keepHead) as $rowData) {
+		foreach (self::readExcelGenerator($filePath, $keepHead) as $rowData) {
 			$excelData[] = $rowData;
 		}
 
@@ -31,20 +31,20 @@ class ExcelUtil
 	/**
 	 * 读取文件 生成器方式
 	 *
-	 * @param        $file_path  // 文件路径
-	 * @param  bool  $keepHead   // 是否保留头部，是从第1行读取，否则从第2行读取
+	 * @param        $filePath  // 文件路径
+	 * @param  bool  $keepHead  // 是否保留头部，是从第1行读取，否则从第2行读取
 	 *
 	 * @return \Generator
 	 * @throws \Exception
 	 */
-	public static function readExcelGenerator($file_path, bool $keepHead = false): \Generator
+	public static function readExcelGenerator($filePath, bool $keepHead = false): \Generator
 	{
 		try {
-			if ( ! file_exists($file_path)) {
+			if ( ! file_exists($filePath)) {
 				throw new \Exception('文件不存在');
 			}
 			// 1. 加载Excel文件
-			$spreadsheet = IOFactory::load($file_path);
+			$spreadsheet = IOFactory::load($filePath);
 			// 指定读取的 sheet
 			$spreadsheet->setActiveSheetIndex(0);
 			// 获取 sheet 对象
