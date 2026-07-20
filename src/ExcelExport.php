@@ -31,6 +31,9 @@ class ExcelExport
 	// 图片列名 集合
 	private array $imgColumns = [];
 
+	// 图片路径为空时的提示信息
+	private string $imgEmptyMsg = '';
+
 	// 图片 宽
 	private int $imgWidth = 60;
 
@@ -111,15 +114,20 @@ class ExcelExport
 			$letter = $this->numToLetter($colIdx);
 			// 在图片列集合中，插入图片
 			if (in_array($key, $this->imgColumns)) {
-				try {
-					// 插入图片到单元格
-					$this->insertImage($letter, $cellVal);
-					// 标识有图片
-					$haveImg = true;
-				} catch (\Exception $exception) {
-					// 将异常信息写入该位置
-					$errMsg = sprintf("图片异常，图片路径：%s,错误信息：%s ", $cellVal, $exception->getMessage());
-					$this->sheet->setCellValue("{$letter}{$this->currentRow}", $errMsg);
+				// 图片路径为空
+				if (empty($cellVal)) {
+					$this->sheet->setCellValue("{$letter}{$this->currentRow}", $this->imgEmptyMsg);
+				} else {
+					try {
+						// 插入图片到单元格
+						$this->insertImage($letter, $cellVal);
+						// 标识有图片
+						$haveImg = true;
+					} catch (\Exception $exception) {
+						// 将异常信息写入该位置
+						$errMsg = sprintf("图片异常，图片路径：%s,错误信息：%s ", $cellVal, $exception->getMessage());
+						$this->sheet->setCellValue("{$letter}{$this->currentRow}", $errMsg);
+					}
 				}
 			} else {
 				// 非图片列，插入文字。如果长数字显示字符串，在传入数字时需加引号
@@ -166,19 +174,21 @@ class ExcelExport
 	/**
 	 * 设置图片属性
 	 *
-	 * @param  array  $imgColumns  // 图片列名 集合：数据中的关联索引/没索引则为下标
-	 * @param  int    $w           // 图片 宽
-	 * @param  int    $h           // 图片 高
-	 * @param  int    $rowH        // 行高
+	 * @param  array   $imgColumns   // 图片列名 集合：数据中的关联索引/没索引则为下标
+	 * @param  string  $imgEmptyMsg  // 图片路径为空时的提示信息
+	 * @param  int     $w            // 图片 宽
+	 * @param  int     $h            // 图片 高
+	 * @param  int     $rowH         // 行高
 	 *
 	 * @return void
 	 */
-	public function setImageAttr(array $imgColumns, int $w = 60, int $h = 60, int $rowH = 70)
+	public function setImageAttr(array $imgColumns, string $imgEmptyMsg = '', int $w = 60, int $h = 60, int $rowH = 70)
 	{
-		$this->imgColumns = $imgColumns;
-		$this->imgWidth   = $w;
-		$this->imgHeight  = $h;
-		$this->rowHeight  = $rowH;
+		$this->imgColumns  = $imgColumns;
+		$this->imgEmptyMsg = $imgEmptyMsg;
+		$this->imgWidth    = $w;
+		$this->imgHeight   = $h;
+		$this->rowHeight   = $rowH;
 	}
 
 	/**
